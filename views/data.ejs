@@ -44,21 +44,20 @@
     <div class="col-sm p-2">
       <div class="card text-center">
         <h5 class="card-header">Total Number of Repositories</h5>
-        <div class="card-body">
-          <h1 class="card-title"><%=botData.length%></h1>
-        </div>
+      <div class="card-body">
+        <h1 class="card-title"><%=botData.length%></h1>
       </div>
     </div>
-    <div class="col-sm p-2">
-      <% var temp1 = 0; %>
-      <% var temp2 = 0; %>
-      <% var temp3 = 0; %>
-      <% var temp4 = 0; %>
-      <% var temp5 = 0; %>
-      <% var temp6 = 0; %>
-      <% var temp7 = 0; %>
-
-      <% botData.forEach(function(data){ %>
+  </div>
+  <div class="col-sm p-2">
+    <% var temp1 = 0; %>
+    <% var temp2 = 0; %>
+    <% var temp3 = 0; %>
+    <% var temp4 = 0; %>
+    <% var temp5 = 0; %>
+    <% var temp6 = 0; %>
+    <% var temp7 = 0; %>
+    <% botData.forEach(function(data){ %>
       <%temp1 = temp1 + data.activePullRequests%>
       <%temp2 = temp2 + data.activeIssues%>
       <%temp3 = temp3 + data.commits%>
@@ -66,43 +65,60 @@
       <%temp5 = temp5 + data.openPull%>
       <%temp6 = temp6 + data.closedIssues%>
       <%temp7 = temp7 + data.newIssues%>
-      <% }); %>
-      <div class="card">
-        <h5 class="card-header text-center">
-          Overview
-        </h5>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">Active Pull Requests: <%=temp1%></li>
-          <li class="list-group-item">Active Issues: <%=temp2%></li>
-        </ul>
-      </div>
-    </div>
-    <div class="col-sm p-2">
-      <div id="barchart_values" style="width: auto;"></div>
-    </div>
+    <% }); %>
+    <div class="card">
+  <h5 class="card-header text-center">
+    Overview
+  </h5>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Active Pull Requests: <%=temp1%></li>
+    <li class="list-group-item">Active Issues: <%=temp2%></li>
+  </ul>
+</div>
+
+
   </div>
+  <div class="col-sm p-2">
+    <div id="barchart_values" style="width: auto;"></div>
+  </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
   <hr class="mt-0 mb-0 ml-2 mr-2">
   <div class="p-2">
     <table class="table table-hover" style="background-color:white;">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Institution</th>
-          <th scope="col">Email</th>
-          <th scope="col">Access Granted</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% users.forEach(function(user){ %>
-        <tr>
-          <th scope="row"><%=user.name%></th>
-          <td><%=user.institution%></td>
-          <td><%=user.username%></td>
-          <td><%=user.access%></td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Institution</th>
+      <th scope="col">Email</th>
+      <th scope="col">Access Granted</th>
+    </tr>
+  </thead>
+  <tbody>
+     <% users.forEach(function(user){ %>
+      <tr>
+      <th scope="row"><%=user.name%></th>
+      <td><%=user.institution%></td>
+      <td><%=user.username%></td>
+      <td><%=user.access%></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
   </div>
   <script type="text/javascript">
     google.charts.load("current", {
@@ -116,11 +132,11 @@
         ["Insights", "#", {
           role: "style"
         }],
-        ["Commits", < %= temp3 % > , "#76A7FA"],
-        ["Merged Pull Requests", < %= temp4 % > , "#C3B1E1"],
-        ["Open Pull Requests", < %= temp5 % > , "#AEC997"],
-        ["Closed Issues", < %= temp6 % > , "color: #FF6962"],
-        ["New Issues", < %= temp7 % > , "color: #fdf496"]
+        ["Commits", <%=temp3%>, "#76A7FA"],
+        ["Merged Pull Requests", <%=temp4%>, "#C3B1E1"],
+        ["Open Pull Requests", <%=temp5%>, "#AEC997"],
+        ["Closed Issues", <%=temp6%>, "color: #FF6962"],
+        ["New Issues", <%=temp7%>, "color: #fdf496"]
       ]);
 
       var view = new google.visualization.DataView(data);
@@ -148,5 +164,4 @@
     }
   </script>
 </body>
-
 </html>
