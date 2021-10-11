@@ -11,6 +11,99 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+  <!-- Just an image -->
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">
+      <i class="fab fa-github fa-1x mr-1"></i>
+      COP4935 - GitHub Bots
+    </a>
+  </nav>
+  <div class="d-flex justify-content-between">
+    <div class="p-2 flex-row">
+      <a class="btn btn-outline-dark" href="/logout" role="button">Log Out</a>
+    </div>
+    <div class="p-2">
+      <div class="d-flex flex-row">
+        <div class="pr-2">
+          <form class="form-inline input-group" action="/data" method="post">
+            <input type="eamil" class="form-control" placeholder="example@domain.com" name="username" required>
+            <div class="input-group-append">
+              <button class="btn btn-outline-success" type="submit">Grant Access</button>
+            </div>
+          </form>
+        </div>
+        <div><a class="btn btn-outline-primary" href="/download" role="button">Download CSV</a></div>
+      </div>
+    </div>
+  </div>
+  <hr class="mt-0 mb-0 ml-2 mr-2">
+  <div class="row ml-2 mr-2">
+    <div class="col-sm p-2">
+      <div class="card text-center">
+        <h5 class="card-header">Total Number of Repositories</h5>
+        <div class="card-body">
+          <h1 class="card-title"><%=botData.length%></h1>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm p-2">
+      <% var temp1 = 0; %>
+      <% var temp2 = 0; %>
+      <% var temp3 = 0; %>
+      <% var temp4 = 0; %>
+      <% var temp5 = 0; %>
+      <% var temp6 = 0; %>
+      <% var temp7 = 0; %>
+
+      <% botData.forEach(function(data){ %>
+      <%temp1 = temp1 + data.activePullRequests%>
+      <%temp2 = temp2 + data.activeIssues%>
+      <%temp3 = temp3 + data.commits%>
+      <%temp4 = temp4 + data.mergedPull%>
+      <%temp5 = temp5 + data.openPull%>
+      <%temp6 = temp6 + data.closedIssues%>
+      <%temp7 = temp7 + data.newIssues%>
+      <% }); %>
+      <div class="card">
+        <h5 class="card-header text-center">
+          Overview
+        </h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Active Pull Requests: <%=temp1%></li>
+          <li class="list-group-item">Active Issues: <%=temp2%></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm p-2">
+      <div id="barchart_values" style="width: auto;"></div>
+    </div>
+  </div>
+  <hr class="mt-0 mb-0 ml-2 mr-2">
+  <div class="p-2">
+    <table class="table table-hover" style="background-color:white;">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Institution</th>
+          <th scope="col">Email</th>
+          <th scope="col">Access Granted</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(function(user){ %>
+        <tr>
+          <th scope="row"><%=user.name%></th>
+          <td><%=user.institution%></td>
+          <td><%=user.username%></td>
+          <td><%=user.access%></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
   <script type="text/javascript">
     google.charts.load("current", {
       packages: ["corechart"]
@@ -18,15 +111,16 @@
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
+      var den = 100;
       var data = google.visualization.arrayToDataTable([
         ["Insights", "#", {
           role: "style"
         }],
-        ["Commits", 8.94, "#76A7FA"],
-        ["Merged Pull Requests", 10.49, "#C3B1E1"],
-        ["Open Pull Requests", 19.30, "#AEC997"],
-        ["Closed Issues", 21.45, "color: #FF6962"],
-        ["New Issues", 21.45, "color: #fdf496"]
+        ["Commits", < %= temp3 % > , "#76A7FA"],
+        ["Merged Pull Requests", < %= temp4 % > , "#C3B1E1"],
+        ["Open Pull Requests", < %= temp5 % > , "#AEC997"],
+        ["Closed Issues", < %= temp6 % > , "color: #FF6962"],
+        ["New Issues", < %= temp7 % > , "color: #fdf496"]
       ]);
 
       var view = new google.visualization.DataView(data);
@@ -42,8 +136,6 @@
 
       var options = {
         title: "Overview of Insights",
-        width: 600,
-        height: 400,
         bar: {
           groupWidth: "85%"
         },
@@ -55,65 +147,6 @@
       chart.draw(view, options);
     }
   </script>
-</head>
-
-<body>
-  <!-- Just an image -->
-  <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">
-      <i class="fab fa-github fa-1x mr-1"></i>
-      COP4935 - GitHub Bots
-    </a>
-  </nav>
-
-  <div class="d-flex justify-content-between">
-    <div class="p-2 flex-row">
-      <a class="btn btn-outline-dark" href="/logout" role="button">Log Out</a>
-    </div>
-    <div class="p-2">
-      <div class="d-flex flex-row">
-        <div class="pr-2">
-
-
-          <form class="form-inline input-group" action="/data" method="post">
-            <input type="eamil" class="form-control" placeholder="example@domain.com" name="username" required>
-            <div class="input-group-append">
-              <button class="btn btn-outline-success" type="submit">Grant Access</button>
-            </div>
-          </form>
-
-
-
-        </div>
-        <div><a class="btn btn-outline-primary" href="/download" role="button">Download CSV</a></div>
-      </div>
-    </div>
-  </div>
-  <hr class="mt-0 mb-0 ml-2 mr-2">
-  <div class="p-2" id="barchart_values" style="width: 900px; height: auto;"></div>
-  <hr class="mt-0 mb-0 ml-2 mr-2">
-  <div class="p-2">
-    <table class="table table-hover" style="background-color:white;">
-  <thead>
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Institution</th>
-      <th scope="col">Email</th>
-      <th scope="col">Access Granted</th>
-    </tr>
-  </thead>
-  <tbody>
-     <% users.forEach(function(user){ %>
-      <tr>
-      <th scope="row"><%=user.name%></th>
-      <td><%=user.institution%></td>
-      <td><%=user.username%></td>
-      <td><%=user.access%></td>
-    </tr>
-    <% }) %>
-  </tbody>
-</table>
-  </div>
 </body>
 
 </html>

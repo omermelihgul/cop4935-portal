@@ -102,14 +102,6 @@ app.get("/data", function(req, res){
   });
 });
 
-app.get("/submit", function(req, res){
-  if (req.isAuthenticated()){
-    res.render("submit");
-  } else {
-    res.redirect("/login");
-  }
-});
-
 app.post("/data", function(req, res){
   User.findOne({username: req.body.username}, function(err, foundUser){
     if (err) {
@@ -120,6 +112,8 @@ app.post("/data", function(req, res){
         foundUser.save(function(){
           res.redirect("/data");
         });
+      } else {
+        res.redirect("/data");
       }
     }
   });
