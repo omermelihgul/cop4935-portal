@@ -41,7 +41,7 @@
   </div>
   <hr class="mt-0 mb-0 ml-2 mr-2">
   <div class="row mr-1 ml-1">
-    <div class="col-sm pr-1 pl-1 mt-2 mb-2">
+    <div class="col-md-3 col-sm-6 pr-1 pl-1 mt-2 mb-2">
       <div class="card text-center">
         <h5 class="card-header">Total Number of Repositories</h5>
       <div class="card-body">
@@ -49,7 +49,7 @@
       </div>
     </div>
   </div>
-  <div class="col-sm pr-1 pl-1 mt-2 mb-2">
+  <div class="col-md-3 col-sm-6 pr-1 pl-1 mt-2 mb-2">
     <% var temp1 = 0; %>
     <% var temp2 = 0; %>
     <% var temp3 = 0; %>
@@ -78,8 +78,8 @@
 
 
   </div>
-  <div class="col-sm pr-1 pl-1 mt-2 mb-2">
-    <div id="barchart_values" style="width: auto;"></div>
+  <div class="col-md-6 pr-1 pl-1 mt-2 mb-2">
+    <div id="barchart_values"></div>
   </div>
   </div>
 
@@ -152,8 +152,9 @@
 
       var options = {
         title: "Overview of Insights",
+        height: 350,
         bar: {
-          groupWidth: "85%"
+          groupWidth: "75%"
         },
         legend: {
           position: "none"
