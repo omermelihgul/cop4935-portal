@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const session = require('express-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const ObjectsToCsv = require('objects-to-csv');
 
 const app = express();
 
@@ -25,10 +26,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect(process.env.MONGODB, {useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB, { useNewUrlParser: true });
 mongoose.set("useCreateIndex", true);
 
-const userSchema = new mongoose.Schema ({
+const userSchema = new mongoose.Schema({
   name: String,
   institution: String,
   username: String,
@@ -37,14 +38,21 @@ const userSchema = new mongoose.Schema ({
   secret: String
 });
 
-const dataSchema = new mongoose.Schema ({
+const dataSchema = new mongoose.Schema({
+  _id: mongoose.ObjectId,
+  repo_owner: String,
+  repo_full_name: String,
+  repo_name: String,
+  repo_id: Number,
+  repo_url: String,
   commits: Number,
   pushes: Number,
   issues_opened: Number,
   issues_closed: Number,
   pull_requests_opened: Number,
   pull_requests_merged: Number
-}, {collection : 'dataBotRepos'});
+}, { collection: 'dataBotRepos' });
+
 
 
 userSchema.plugin(passportLocalMongoose);
@@ -54,60 +62,60 @@ var collectedData = mongoose.model('dataBotRepos', dataSchema);
 
 passport.use(User.createStrategy());
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
-
-app.get("/", function(req, res){
+app.get("/", function(req, res) {
   res.render("home");
 });
 
-app.get("/login", function(req, res){
+app.get("/login", function(req, res) {
   res.render("login");
 });
 
-app.get("/register", function(req, res){
+app.get("/register", function(req, res) {
   res.render("register");
 });
 
-app.get("/data", function(req, res){
-  collectedData.find({},'', function (err, data) {
-    if (err) return handleError(err);
-    User.findById(req.user.id, function(err, foundUser){
-    if (err) {
-      console.log(err);
-      res.render("invalidLogin");
-    } else {
-      if (foundUser) {
-        if (foundUser.access === true){
-          User.find({},'', function (err, foundUsers) {
-            res.render("data", {botData: data, users: foundUsers});
-          });
-        } else {
-          res.render("accessNotGranted");
-        }
+app.get("/data", function(req, res) {
+  if (req.isAuthenticated()) {
+    User.findById(req.user.id, function(err, foundUser) {
+      if (err) {
+        //console.log(err);
+        res.redirect("/login");
       } else {
-        res.render("invalidLogin");
+        if (foundUser) {
+          if (foundUser.access === true) {
+            User.find({}, '', function(err, foundUsers) {
+              collectedData.find({}, '', function(err, data) {
+                if (err) return handleError(err);
+                res.render("data", { botData: data, users: foundUsers });
+
+              });
+
+            });
+          } else {
+            res.render("accessNotGranted");
+          }
+        } else {
+          res.render("invalidLogin");
+        }
       }
-    }
-  });
-  });
+    });
+  } else {
+    res.redirect("/login");
+  }
 });
 
-app.post("/data", function(req, res){
-  User.findOne({username: req.body.username}, function(err, foundUser){
+
+app.post("/data", function(req, res) {
+  User.findOne({ username: req.body.username }, function(err, foundUser) {
     if (err) {
       console.log(err);
     } else {
       if (foundUser) {
         foundUser.access = true;
-        foundUser.save(function(){
+        foundUser.save(function() {
           res.redirect("/data");
         });
       } else {
@@ -117,19 +125,19 @@ app.post("/data", function(req, res){
   });
 });
 
-app.get("/logout", function(req, res){
+app.get("/logout", function(req, res) {
   req.logout();
   res.redirect("/");
 });
 
-app.post("/register", function(req, res){
+app.post("/register", function(req, res) {
 
-  User.register({name: req.body.name, institution: req.body.institution, username: req.body.username, access: false}, req.body.password, function(err, user){
+  User.register({ name: req.body.name, institution: req.body.institution, username: req.body.username, access: false }, req.body.password, function(err, user) {
     if (err) {
       console.log(err);
       res.render("existingUser");
     } else {
-      passport.authenticate("local")(req, res, function(){
+      passport.authenticate("local")(req, res, function() {
         res.redirect("/data");
       });
     }
@@ -137,18 +145,18 @@ app.post("/register", function(req, res){
 
 });
 
-app.post("/login", function(req, res){
+app.post("/login", function(req, res) {
 
   const user = new User({
     username: req.body.username,
     password: req.body.password
   });
 
-  req.login(user, function(err){
+  req.login(user, function(err) {
     if (err) {
       console.log(err);
     } else {
-      passport.authenticate("local")(req, res, function(){
+      passport.authenticate("local")(req, res, function() {
         res.redirect("/data");
       });
     }
@@ -156,11 +164,29 @@ app.post("/login", function(req, res){
 
 });
 
+app.get("/download", function(req, res) {
+  if (req.isAuthenticated()) {
+    collectedData.find({}, '', function(err, data) {
+      (async () => {
+        const csv = new ObjectsToCsv(data);
+
+        // Save to file:
+        await csv.toDisk('./DataBotRepos.csv');
+
+        res.download('./DataBotRepos.csv');
+        // res.render("data");
+      })();
+    }).lean();
+  } else {
+    res.redirect("/login");
+  }
+});
+
 let port = process.env.PORT;
 if (port == null || port == "") {
-    port = 3000;
+  port = 3000;
 }
 
 app.listen(port, function() {
-    console.log("Server started on port 3000.");
+  console.log("Server started on port 3000.");
 });
