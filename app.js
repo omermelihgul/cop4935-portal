@@ -114,7 +114,12 @@ app.post("/data", function(req, res) {
       console.log(err);
     } else {
       if (foundUser) {
-        foundUser.access = true;
+        if(foundUser.access){
+          foundUser.access = false;
+        }
+        else {
+          foundUser.access = true;
+        }
         foundUser.save(function() {
           res.redirect("/data");
         });
