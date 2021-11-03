@@ -38,21 +38,19 @@ const userSchema = new mongoose.Schema ({
 });
 
 const dataSchema = new mongoose.Schema ({
-  botID: String,
-  activePullRequests: Number,
-  activeIssues: Number,
   commits: Number,
-  mergedPull: Number,
-  openPull: Number,
-  closedIssues: Number,
-  newIssues: Number,
-});
+  pushes: Number,
+  issues_opened: Number,
+  issues_closed: Number,
+  pull_requests_opened: Number,
+  pull_requests_merged: Number
+}, {collection : 'dataBotRepos'});
 
 
 userSchema.plugin(passportLocalMongoose);
 
-const User = mongoose.model("users", userSchema);
-const collectedData = mongoose.model('bots', dataSchema);
+var User = mongoose.model("users", userSchema);
+var collectedData = mongoose.model('dataBotRepos', dataSchema);
 
 passport.use(User.createStrategy());
 

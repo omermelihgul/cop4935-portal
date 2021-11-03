@@ -41,7 +41,7 @@
   </div>
   <hr class="mt-0 mb-0 ml-2 mr-2">
   <div class="row mr-1 ml-1">
-    <div class="col-md-3 col-sm-6 pr-1 pl-1 mt-2 mb-2">
+    <div class="col-md-6 col-sm-6 pr-1 pl-1 mt-2 mb-2">
       <div class="card text-center">
         <h5 class="card-header">Total Number of Repositories</h5>
       <div class="card-body">
@@ -49,36 +49,21 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 pr-1 pl-1 mt-2 mb-2">
-    <% var temp1 = 0; %>
+  <div class="col-md-6 col-sm-6 pr-1 pl-1 mt-2 mb-2">
+        <% var temp1 = 0; %>
     <% var temp2 = 0; %>
     <% var temp3 = 0; %>
     <% var temp4 = 0; %>
     <% var temp5 = 0; %>
     <% var temp6 = 0; %>
-    <% var temp7 = 0; %>
     <% botData.forEach(function(data){ %>
-      <%temp1 = temp1 + data.activePullRequests%>
-      <%temp2 = temp2 + data.activeIssues%>
-      <%temp3 = temp3 + data.commits%>
-      <%temp4 = temp4 + data.mergedPull%>
-      <%temp5 = temp5 + data.openPull%>
-      <%temp6 = temp6 + data.closedIssues%>
-      <%temp7 = temp7 + data.newIssues%>
+      <%temp1 = temp1 + data.commits%>
+      <%temp2 = temp2 + data.pushes%>
+      <%temp3 = temp3 + data.issues_opened%>
+      <%temp4 = temp4 + data.issues_closed%>
+      <%temp5 = temp5 + data.pull_requests_opened%>
+      <%temp6 = temp6 + data.pull_requests_merged%>
     <% }); %>
-    <div class="card">
-  <h5 class="card-header text-center">
-    Overview
-  </h5>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">Active Pull Requests: <%=temp1%></li>
-    <li class="list-group-item">Active Issues: <%=temp2%></li>
-  </ul>
-</div>
-
-
-  </div>
-  <div class="col-md-6 pr-1 pl-1 mt-2 mb-2">
     <div id="barchart_values"></div>
   </div>
   </div>
@@ -132,11 +117,12 @@
         ["Insights", "#", {
           role: "style"
         }],
-        ["Commits", <%=temp3%>, "#76A7FA"],
-        ["Merged Pull Requests", <%=temp4%>, "#C3B1E1"],
-        ["Open Pull Requests", <%=temp5%>, "#AEC997"],
-        ["Closed Issues", <%=temp6%>, "color: #FF6962"],
-        ["New Issues", <%=temp7%>, "color: #fdf496"]
+        ["Commits", <%=temp1%>, "#76A7FA"],
+        ["Pushes", <%=temp2%>, "#C3B1E1"],
+        ["Issues Opened", <%=temp3%>, "#AEC997"],
+        ["Issues Closed", <%=temp4%>, "color: #FF6962"],
+        ["Pull Requests Opened", <%=temp5%>, "color: #fdf496"],
+        ["Pull Requests Merged", <%=temp6%>, "#AEC997"]
       ]);
 
       var view = new google.visualization.DataView(data);
