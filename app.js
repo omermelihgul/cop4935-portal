@@ -53,12 +53,23 @@ const dataSchema = new mongoose.Schema({
   pull_requests_merged: Number
 }, { collection: 'dataBotRepos' });
 
+const dataSchema2 = new mongoose.Schema({}, { collection: 'commBotCommits' });
+const dataSchema3 = new mongoose.Schema({}, { collection: 'issueClosure' });
+const dataSchema4 = new mongoose.Schema({}, { collection: 'gamBotIssues' });
+const dataSchema5 = new mongoose.Schema({}, { collection: 'gamBotLevels' });
+const dataSchema6 = new mongoose.Schema({}, { collection: 'gamBotPushes' });
+
 
 
 userSchema.plugin(passportLocalMongoose);
 
 var User = mongoose.model("users", userSchema);
 var collectedData = mongoose.model('dataBotRepos', dataSchema);
+var collectedData2 = mongoose.model('commBotCommits', dataSchema2);
+var collectedData3 = mongoose.model('issueClosure', dataSchema3);
+var collectedData4 = mongoose.model('gamBotIssues', dataSchema4);
+var collectedData5 = mongoose.model('gamBotLevels', dataSchema5);
+var collectedData6 = mongoose.model('gamBotPushes', dataSchema6);
 
 passport.use(User.createStrategy());
 
@@ -95,6 +106,7 @@ app.get("/data", function(req, res) {
 
             });
           } else {
+            req.logout();
             res.render("accessNotGranted");
           }
         } else {
@@ -114,10 +126,9 @@ app.post("/data", function(req, res) {
       console.log(err);
     } else {
       if (foundUser) {
-        if(foundUser.access){
+        if (foundUser.access) {
           foundUser.access = false;
-        }
-        else {
+        } else {
           foundUser.access = true;
         }
         foundUser.save(function() {
@@ -161,13 +172,13 @@ app.post("/login", function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      passport.authenticate("local", {successRedirect: '/data', failureRedirect: '/login' })(req, res, function() {});
+      passport.authenticate("local", { successRedirect: '/data', failureRedirect: '/login' })(req, res, function() {});
     }
   });
 
 });
 
-app.get("/download", function(req, res) {
+app.get("/download1", function(req, res) {
   if (req.isAuthenticated()) {
     collectedData.find({}, '', function(err, data) {
       (async () => {
@@ -177,6 +188,96 @@ app.get("/download", function(req, res) {
         await csv.toDisk('./DataBotRepos.csv');
 
         res.download('./DataBotRepos.csv');
+        // res.render("data");
+      })();
+    }).lean();
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/download2", function(req, res) {
+  if (req.isAuthenticated()) {
+    collectedData2.find({}, '', function(err, data) {
+      (async () => {
+        const csv = new ObjectsToCsv(data);
+
+        // Save to file:
+        await csv.toDisk('./CommitsBot.csv');
+
+        res.download('./CommitsBot.csv');
+        // res.render("data");
+      })();
+    }).lean();
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/download3", function(req, res) {
+  if (req.isAuthenticated()) {
+    collectedData3.find({}, '', function(err, data) {
+      (async () => {
+        const csv = new ObjectsToCsv(data);
+
+        // Save to file:
+        await csv.toDisk('./IssueClosure.csv');
+
+        res.download('./IssueClosure.csv');
+        // res.render("data");
+      })();
+    }).lean();
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/download4", function(req, res) {
+  if (req.isAuthenticated()) {
+    collectedData4.find({}, '', function(err, data) {
+      (async () => {
+        const csv = new ObjectsToCsv(data);
+
+        // Save to file:
+        await csv.toDisk('./GamificationBotIssues.csv');
+
+        res.download('./GamificationBotIssues.csv');
+        // res.render("data");
+      })();
+    }).lean();
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/download5", function(req, res) {
+  if (req.isAuthenticated()) {
+    collectedData5.find({}, '', function(err, data) {
+      (async () => {
+        const csv = new ObjectsToCsv(data);
+
+        // Save to file:
+        await csv.toDisk('./GamificationBotLevels.csv');
+
+        res.download('./GamificationBotLevels.csv');
+        // res.render("data");
+      })();
+    }).lean();
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/download6", function(req, res) {
+  if (req.isAuthenticated()) {
+    collectedData6.find({}, '', function(err, data) {
+      (async () => {
+        const csv = new ObjectsToCsv(data);
+
+        // Save to file:
+        await csv.toDisk('./GamificationBotPushes.csv');
+
+        res.download('./GamificationBotPushes.csv');
         // res.render("data");
       })();
     }).lean();
